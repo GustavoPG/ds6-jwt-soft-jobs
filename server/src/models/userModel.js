@@ -31,6 +31,7 @@ const findUserById = async (id) => {
   return response.rows[0];
 };
 
+
 export { createUserModel, findUserByEmail, findUserById };
 
 

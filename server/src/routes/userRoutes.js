@@ -6,7 +6,9 @@ import { validateToken } from '../middlewares/validateTokenMiddleware.js';
 import { reportTransasction } from '../middlewares/reportMiddleware.js';
 const router = Router();
 
-router.use(reportQueries);
+router.use(reportTransasction);
+
+// Rutas
 router.post('/login',validparameters, loginUser);
 router.post('/usuarios',validateParametersUser ,createNewUser);
 router.get('/usuarios', validateToken, getUser);

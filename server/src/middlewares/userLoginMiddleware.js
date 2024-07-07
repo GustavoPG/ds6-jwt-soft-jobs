@@ -6,7 +6,7 @@ const isLogin = async (req, res, next) => {
         validateHeaders(req, res);
         const token = req.header('Authorization').split(' ')[1]; //[bearer token]
         const tokenData = await validateToken(token);
-        req.user = tokenData; // req.user es un objeto que contiene la info del usuario
+        req.user = tokenData;
         next();
     } catch (error) {
         const errorFound = findError(error.code);

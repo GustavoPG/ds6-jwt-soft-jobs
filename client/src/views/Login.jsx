@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import { ENDPOINT } from '../config/constans';
 import Context from '../contexts/Context';
-import Swal from 'sweetalert2';
 
 const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 const initialForm = { email: 'docente@desafiolatam.com', password: '123456' };
@@ -46,12 +46,12 @@ const Login = () => {
           navigate('/perfil');
         });
       })
-      .catch(({ response: { data } }) => {
-        console.error(data);
+      .catch(({ response }) => {
+        const message = response?.data?.message || 'Ocurrió un error inesperado';
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: `${data.message} 🙁.`,
+          text: `${message} 🙁.`,
         });
       });
   };

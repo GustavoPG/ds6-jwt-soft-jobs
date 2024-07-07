@@ -2,7 +2,7 @@
 import { findUserByEmail, createUserModel } from '../models/userModel.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { searchError } from '../utils/utils.js';
+//import { searchError } from '../utils/utils.js';
 
 const getUser = async (req, res) => {
   try {
@@ -24,12 +24,12 @@ const loginUser = async (req, res) => {
       const { email, password } = req.body;
       const findUser = await findUserByEmail(email);
       if (!findUser) {
-          return await sendErrorResponse(res, 'auth_1');
+        return res.status(404).json({ error: 'auth_1', message: 'Email no Registrado' });
       }
 
       const isPasswordValid = bcrypt.compareSync(password, findUser.password);
       if (!isPasswordValid) {
-          return await sendErrorResponse(res, 'auth_2');
+        return res.status(401).json({ error: 'auth_2', message: 'Contraseña incorrecta' });
       }
       
       const token = await createToken(findUser.email);
@@ -39,7 +39,7 @@ const loginUser = async (req, res) => {
           token,
       });
   } catch (error) {
-      res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'server_error', message: error.message });
   }
 };
 
@@ -48,13 +48,13 @@ const createToken = async (email) => {
   return token;
 };
 
-const sendErrorResponse = async (res, errorCode) => {
-    const errorFound = searchError(errorCode);
-    if (!errorFound || !errorFound[0] || !errorFound[0].status) {
-      return res.status(500).json({ error: 'Unknown error' });
-    }
-    return res.status(errorFound.status).json({ error: errorFound.message });
-};
+// const sendErrorResponse = async (res, errorCode) => {
+//     const errorFound = searchError(errorCode);
+//     if (!errorFound || !errorFound[0] || !errorFound[0].status) {
+//       return res.status(500).json({ error: 'Unknown error' });
+//     }
+//     return res.status(errorFound.status).json({ error: errorFound.message });
+// };
 
 const createNewUser = async (req, res) => {
   try {

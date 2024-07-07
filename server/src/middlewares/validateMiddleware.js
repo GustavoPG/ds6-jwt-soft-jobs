@@ -17,9 +17,6 @@ const validateParametersUser = (req, res, next) => {
     if (!emailRegex.test(email)) {
       return res.status(400).json({ error: "El email debe tener un formato válido" });
     }
-    if (password.length < 4) {
-      return res.status(400).json({ error: "La contraseña debe tener al menos 4 caracteres" });
-    }
     next();
   };
 

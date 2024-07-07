@@ -60,12 +60,12 @@ const createNewUser = async (req, res) => {
   try {
     const { email, password, rol, lenguage } = req.body;
     if (!email || !password || !rol || !lenguage) {
-      return res.status(400).json({ error: "Todos los campos son requeridos" });
+      return res.status(400).json({ message: "Todos los campos son requeridos" });
     }
 
     const existUser = await findUserByEmail(email);
     if (existUser) {
-      return res.status(409).json({ error: '¡Email ya existe!' });
+      return res.status(409).json({ message: '¡Email ya existe!' });
     }
 
     const hashedPassword = bcrypt.hashSync(password);

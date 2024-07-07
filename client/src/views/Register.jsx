@@ -52,12 +52,12 @@ const Register = () => {
           navigate('/login');
         });
       })
-      .catch(({ response: { data } }) => {
-        console.error(data);
+      .catch(({ response }) => {
+        const message = response?.data?.message || 'Ocurrió un error inesperado';
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: `${data.message} 🙁.`,
+          text: `${message} 🙁.`,
         });
       });
   };

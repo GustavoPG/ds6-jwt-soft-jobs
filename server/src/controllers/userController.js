@@ -6,11 +6,11 @@ import { searchError } from '../utils/utils.js';
 
 const getUser = async (req, res) => {
   try {
-    const email = req.user.email; // Obtiene el email del token decodificado
-    const user = await findUserByEmail(email); // Busca el usuario por email
+    const email = req.user.email; 
+    const user = await findUserByEmail(email); 
 
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ error: 'Email no Existe' });
     }
     res.status(200).json([user]);
   } catch (error) {
@@ -32,10 +32,9 @@ const loginUser = async (req, res) => {
           return await sendErrorResponse(res, 'auth_2');
       }
       
-      const { id, email: userEmail, rol, lenguage } = findUser;
-      const token = await createToken(userEmail);
+      const token = await createToken(findUser.email);
       res.status(200).json({
-          message: `Bienvenido, ${userEmail} has iniciado sesión`,
+          message: `Bienvenido, ${findUser.email} has iniciado sesión`,
           code: 200,
           token,
       });
@@ -49,7 +48,6 @@ const createToken = async (email) => {
   return token;
 };
 
-
 const sendErrorResponse = async (res, errorCode) => {
     const errorFound = searchError(errorCode);
     if (!errorFound || !errorFound[0] || !errorFound[0].status) {
@@ -59,18 +57,23 @@ const sendErrorResponse = async (res, errorCode) => {
 };
 
 const createNewUser = async (req, res) => {
-    try {
-      // Verifica que req.body contiene los datos necesarios
-      const { email, password, rol, lenguage } = req.body;
-      if (!email || !password || !rol || !lenguage) {
-        throw new Error("Missing required fields");
-      }
-      const newUser = await createUserModel(email, password, rol, lenguage);
-      res.status(201).json({ user: newUser });
-    } catch (error) {
-      res.status(400).json({ message: error.message }); 
+  try {
+    const { email, password, rol, lenguage } = req.body;
+    if (!email || !password || !rol || !lenguage) {
+      return res.status(400).json({ error: "Todos los campos son requeridos" });
     }
-  };
+
+    const existUser = await findUserByEmail(email);
+    if (existUser) {
+      return res.status(409).json({ error: '¡Email ya existe!' });
+    }
+
+    const hashedPassword = bcrypt.hashSync(password);
+    const newUser = await createUserModel(email, hashedPassword, rol, lenguage);
+    res.status(201).json({ user: newUser });
+  } catch (error) {
+    res.status(500).json({ message: error.message }); 
+  }
+};
 
 export { loginUser, createNewUser, getUser };
-

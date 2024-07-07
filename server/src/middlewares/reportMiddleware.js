@@ -6,4 +6,3 @@ const reportTransasction = (req, res, next) => {
   };
   
   export { reportTransasction };
-

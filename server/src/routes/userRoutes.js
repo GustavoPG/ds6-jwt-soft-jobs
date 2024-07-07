@@ -4,6 +4,7 @@ import { loginUser, createNewUser, getUser  } from '../controllers/userControlle
 import { validparameters, validateParametersUser } from '../middlewares/validateMiddleware.js';
 import { validateToken } from '../middlewares/validateTokenMiddleware.js';
 import { reportTransasction } from '../middlewares/reportMiddleware.js';
+
 const router = Router();
 
 router.use(reportTransasction);

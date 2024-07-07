@@ -1,24 +1,25 @@
-import axios from 'axios'
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { ENDPOINT } from '../config/constans'
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import { ENDPOINT } from '../config/constans';
 
-const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
+const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 const initialForm = {
   email: 'docente@desafiolatam.com',
   password: '123456',
   rol: 'Seleccione un rol',
   lenguage: 'Seleccione un Lenguage'
-}
+};
 
 const Register = () => {
-  const navigate = useNavigate()
-  const [user, setUser] = useState(initialForm)
+  const navigate = useNavigate();
+  const [user, setUser] = useState(initialForm);
 
-  const handleUser = (event) => setUser({ ...user, [event.target.name]: event.target.value })
+  const handleUser = (event) => setUser({ ...user, [event.target.name]: event.target.value });
 
   const handleForm = (event) => {
-    event.preventDefault()
+    event.preventDefault();
 
     if (
       !user.email.trim() ||
@@ -26,35 +27,52 @@ const Register = () => {
       user.rol === 'Seleccione un rol' ||
       user.lenguage === 'Seleccione un Lenguage'
     ) {
-      return window.alert('Todos los campos son obligatorias.')
+      return Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Todos los campos son obligatorios.',
+      });
     }
 
     if (!emailRegex.test(user.email)) {
-      return window.alert('El formato del email no es correcto!')
+      return Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'El formato del email no es correcto!',
+      });
     }
 
     axios.post(ENDPOINT.users, user)
       .then(() => {
-        window.alert('Usuario registrado con éxito 😀.')
-        navigate('/login')
+        Swal.fire({
+          icon: 'success',
+          title: 'Éxito',
+          text: 'Usuario registrado con éxito 😀.',
+        }).then(() => {
+          navigate('/login');
+        });
       })
       .catch(({ response: { data } }) => {
-        console.error(data)
-        window.alert(`${data.message} 🙁.`)
-      })
-  }
+        console.error(data);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: `${data.message} 🙁.`,
+        });
+      });
+  };
 
   useEffect(() => {
     if (window.sessionStorage.getItem('token')) {
-      navigate('/perfil')
+      navigate('/perfil');
     }
-  }, [])
+  }, [navigate]);
 
   return (
     <form onSubmit={handleForm} className='col-10 col-sm-6 col-md-3 m-auto mt-5'>
       <h1>Registrar nuevo usuario</h1>
       <hr />
-      <div className='form-group mt-1 '>
+      <div className='form-group mt-1'>
         <label>Email address</label>
         <input
           value={user.email}
@@ -65,7 +83,7 @@ const Register = () => {
           placeholder='Enter email'
         />
       </div>
-      <div className='form-group mt-1 '>
+      <div className='form-group mt-1'>
         <label>Password</label>
         <input
           value={user.password}
@@ -76,7 +94,7 @@ const Register = () => {
           placeholder='Password'
         />
       </div>
-      <div className='form-group mt-1 '>
+      <div className='form-group mt-1'>
         <label>Rol</label>
         <select
           defaultValue={user.rol}
@@ -106,7 +124,7 @@ const Register = () => {
       </div>
       <button type='submit' className='btn btn-light mt-3'>Registrarme</button>
     </form>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;

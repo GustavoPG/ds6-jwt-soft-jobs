@@ -19,4 +19,3 @@ const validateToken = (req, res, next) => {
 };
 
 export { validateToken };
-
